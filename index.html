@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="x-icon" href="download.jpg">
+    <title>Movie Search App</title>
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+            color: #fff;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            margin-top: 20px;
+            font-size: 2.5em;
+            color: #ff9800;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 12px;
+            width: 60%;
+            max-width: 400px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            font-size: 1em;
+            outline: none;
+            text-align: center;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            margin-left: 10px;
+            background: linear-gradient(135deg, #ff9800, #e68900);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            background: #e68900;
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+        }
+
+        #movie-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .movie-card {
+            background: #292929;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            width: 220px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.9);
+        }
+
+        .movie-card img {
+            width: 100%;
+            border-radius: 10px;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .movie-card h3 {
+            margin: 10px 0 5px 0;
+            font-size: 1.2em;
+            color: #ff9800;
+        }
+
+        .movie-card p {
+            font-size: 0.9em;
+            color: #bbb;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 10px;
+            background: #1e1e1e;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎬 Movie Search App 🎥</h1>
+    <p>Find your favorite movies by title and view details like year, type, and poster.</p>
+    <input type="text" id="movieInput" placeholder="Enter movie title...">
+    <button onclick="fetchMovies()">Search</button>
+    
+    <div id="movie-container"></div>
+
+    <footer>Made with ❤️ | Powered by OMDB API</footer>
+
+    <script>
+        const apiKey = '7ce3cdd7'; 
+
+        function fetchMovies() {
+            const query = document.getElementById('movieInput').value;
+            const container = document.getElementById('movie-container');
+            container.innerHTML = ''; 
+
+            if (!query) {
+                alert('Please enter a movie title');
+                return;
+            }
+
+            fetch(`https://www.omdbapi.com/?s=${query}&apikey=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Response === "True") {
+                        data.Search.forEach(movie => {
+                            const movieCard = document.createElement('div');
+                            movieCard.classList.add('movie-card');
+                            
+                            movieCard.innerHTML = `
+                                <img src="${movie.Poster}" alt="${movie.Title}">
+                                <h3>${movie.Title}</h3>
+                                <p>Year: ${movie.Year}</p>
+                                <p>Type: ${movie.Type}</p>
+                            `;
+                            
+                            container.appendChild(movieCard);
+                        });
+                    } else {
+                        container.innerHTML = '<p>No movies found. Try another search.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    container.innerHTML = '<p>Something went wrong. Please try again later.</p>';
+                });
+        }
+    </script>
+</body>
+</html>
